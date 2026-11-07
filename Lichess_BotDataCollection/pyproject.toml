@@ -1,0 +1,64 @@
+[project]
+name = "lichess-bot-data"
+version = "1.0.0"
+description = "Collects human-vs-BOT chess games from the Lichess open database into analysis-ready tables"
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "konbraphat", email = "konbraphat@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "chess==1.11.2",
+    "httpx>=0.28.1",
+    "polars==1.44.2",
+    "pyarrow==25.0.1",
+    "tzdata>=2025.2",
+    "zstandard==0.25.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29",
+    "mypy>=2.4.0",
+    "nbclient>=0.10",
+    "nbformat>=5.10",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]
+
+[project.scripts]
+lbd = "lichess_bot_data.cli:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM", "RUF", "PL", "D"]
+ignore = ["PLR0913", "PLR2004", "D105", "D107"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "PLR2004"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+warn_unreachable = true
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = ["zstandard.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# faulthandler reports a spurious access violation when spawning processes on Windows
+addopts = "-p no:faulthandler"
